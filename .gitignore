@@ -1,3 +1,5 @@
 .python-version
 UD_Japanese-GSD/
 UD_English-EWT/
+*.zip
+POS_data
