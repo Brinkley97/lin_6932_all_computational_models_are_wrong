@@ -3,3 +3,5 @@ UD_Japanese-GSD/
 UD_English-EWT/
 *.zip
 POS_data
+data/sarah_brown.txt
+.DS_Store
