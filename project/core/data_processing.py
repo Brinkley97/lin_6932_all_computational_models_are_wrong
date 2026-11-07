@@ -198,8 +198,7 @@ class DataProcessing:
     # ==============================================================
     # DATAFRAME HELPERS
     # ==============================================================
-
-    @staticmethod
+    
     def concat_dfs(
         dfs: list[pd.DataFrame],
         axis: int = 0,
@@ -215,7 +214,6 @@ class DataProcessing:
             ignore_index=ignore_index,
         )
 
-    @staticmethod
     def standardize_columns(
         df: pd.DataFrame,
         text_col: str,
@@ -277,6 +275,37 @@ class DataProcessing:
             remaining_cols
         ]
 
+    def df_to_list(df: pd.DataFrame, col: str = None, type_of_df: str = "Standard") -> list:
+        """Convert a DataFrame to a list
+        
+        Parameters:
+        -----------
+        df: `pd.DataFrame`
+            A DataFrame containing the data
+        
+        col: `str`
+            The column to convert to a list
+
+        type_of_df: `str`
+            The type of DataFrame either Standard or Pivot Table
+
+        Returns:
+        --------
+        list
+            A list containing the data from the DataFrame
+        """
+        if type_of_df == "Standard":
+            return df[col].values.tolist()
+        elif type_of_df == "Pivot Table":
+            return df.index.values.tolist()
+        else:
+            return "Options: Standard or Pivot Table"
+    
+    def shuffle_df(df: pd.DataFrame, random_state):
+        """Shuffle the data"""
+        df = df.sample(frac=1, random_state=random_state).reset_index(drop=True)
+        return df
+        
     # ==============================================================
     # FINANCIAL PHRASEBANK
     # ==============================================================
@@ -332,7 +361,7 @@ class DataProcessing:
             text_col="sentence",
             label_col="sentiment",
             standardized_text_col="Base Text Document",
-            standardized_label_col="Sentiment Label",
+            standardized_label_col="Sentiment Ground Truth",
         )
 
         fpb_df["Dataset Name"] = "financial_phrasebank"
@@ -381,7 +410,7 @@ class DataProcessing:
             text_col="text",
             label_col="label",
             standardized_text_col="Base Text Document",
-            standardized_label_col="Sentiment Label",
+            standardized_label_col="Sentiment Ground Truth",
         )
 
         imdb_df["Dataset Name"] = "imdb"
@@ -435,7 +464,7 @@ class DataProcessing:
             text_col=text_col,
             label_col=label_col,
             standardized_text_col="Base Text Document",
-            standardized_label_col="Subjunctive Mood - Suggestions Label",
+            standardized_label_col="Subjunctive Mood - Suggestions Ground Truth",
         )
 
         semeval_df["Dataset Name"] = "semeval_2019_suggestion_mining"
@@ -461,9 +490,10 @@ class DataProcessing:
         yt_df = DataProcessing.load_from_file(
             yt_path,
             file_type="csv",
+            index_col=0,  # treat the first column as the index, not data
         )
 
-        text_col = yt_df.columns[0]
+        text_col  = yt_df.columns[0]
         label_col = yt_df.columns[1]
 
         yt_df = DataProcessing.standardize_columns(
@@ -471,11 +501,11 @@ class DataProcessing:
             text_col=text_col,
             label_col=label_col,
             standardized_text_col="Base Text Document",
-            standardized_label_col="Subjunctive Mood - Suggestions Label",
+            standardized_label_col="Subjunctive Mood - Suggestions Ground Truth",
         )
 
-        yt_df["Dataset Name"] = "youtube_suggestions"
-        yt_df["Data Split"] = "all"
+        yt_df["Dataset Name"]    = "youtube_suggestions"
+        yt_df["Data Split"]      = "all"
         yt_df["Original Source"] = "https://github.com/BurakaKrishna/Suggestion-Mining-Capstone/tree/master"
 
         return yt_df
@@ -521,7 +551,7 @@ class DataProcessing:
             text_col=text_col,
             label_col=label_col,
             standardized_text_col="Base Text Document",
-            standardized_label_col="Sentiment Label",
+            standardized_label_col="Sentiment Ground Truth",
         )
 
         amazon_df["Dataset Name"] = "amazon_sentiment"
